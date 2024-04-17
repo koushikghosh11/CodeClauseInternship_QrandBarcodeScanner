@@ -27,6 +27,6 @@ This app was developed as part of an internship at CodeClause.
 ### Additional Notes
 
 * This app scans a variety of QR code and barcode formats. 
-* The app uses the ZXing library (through Budiyev's wrapper) for code scanning functionalities.
+* The app uses the [ZXing library] (https://github.com/zxing/zxing) (through [Budiyev's wrapper] (https://github.com/yuriy-budiyev/code-scanner)) for code scanning functionalities.
 
 We hope you find this QR & Barcode Scanner app useful!
