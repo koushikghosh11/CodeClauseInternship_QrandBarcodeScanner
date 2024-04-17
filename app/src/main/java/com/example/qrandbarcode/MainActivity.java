@@ -1,10 +1,12 @@
 package com.example.qrandbarcode;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.ClipboardManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,12 +55,18 @@ public class MainActivity extends AppCompatActivity {
         // Set callback to handle successful scan results
         qrCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
             String scannedText = result.getText();
-            // Display toast with scanned text (you can optimize by using a custom view for better UI)
+
+            // copy scan string to clipboard
+            ClipboardManager cb = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("scan", scannedText);
+            cb.setPrimaryClip(clip);
+            Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+
+            // Display toast with scanned text
             Toast.makeText(MainActivity.this, scannedText, Toast.LENGTH_SHORT).show();
         }));
 
-        qrCodeScanner.setErrorCallback(err -> runOnUiThread(() -> {
-            Log.e("Main", "Camera error: "+ err.getMessage());}));
+        qrCodeScanner.setErrorCallback(err -> runOnUiThread(() -> Log.e("Main", "Camera error: "+ err.getMessage())));
 
         // Set click listener to start camera preview on tap
         cameraPreviewView.setOnClickListener(view -> qrCodeScanner.startPreview());
