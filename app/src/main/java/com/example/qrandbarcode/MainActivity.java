@@ -1,36 +1,99 @@
 package com.example.qrandbarcode;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.budiyev.android.codescanner.AutoFocusMode;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.ScanMode;
 
 
 public class MainActivity extends AppCompatActivity {
-    private CodeScanner mCodeScanner;
+
+    private static final int CAMERA_ACCESS = 482;
+
+    // Scanner object for handling QR code scanning
+    private CodeScanner qrCodeScanner;
+
+    // View element for displaying the camera preview
+    private CodeScannerView cameraPreviewView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CodeScannerView scannerView = findViewById(R.id.scanner_view);
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show()));
-        scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
+
+        Toast.makeText(this, "Qr and Barcode scan app for CodeClause Internship", Toast.LENGTH_SHORT).show();
+
+        // Initialize camera preview view
+        cameraPreviewView = findViewById(R.id.scanner_area);
+
+        setCameraAccess();
+
+
+        // Create QR code scanner instance
+        qrCodeScanner = new CodeScanner(this, cameraPreviewView);
+
+        qrCodeScanner.setCamera(CodeScanner.CAMERA_BACK);
+        qrCodeScanner.setFormats(CodeScanner.ALL_FORMATS);
+        qrCodeScanner.setAutoFocusMode(AutoFocusMode.SAFE);
+        qrCodeScanner.setScanMode(ScanMode.CONTINUOUS);
+        qrCodeScanner.setAutoFocusEnabled(true);
+        qrCodeScanner.setFlashEnabled(false);
+
+        // Set callback to handle successful scan results
+        qrCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
+            String scannedText = result.getText();
+            // Display toast with scanned text (you can optimize by using a custom view for better UI)
+            Toast.makeText(MainActivity.this, scannedText, Toast.LENGTH_SHORT).show();
+        }));
+
+        qrCodeScanner.setErrorCallback(err -> runOnUiThread(() -> {
+            Log.e("Main", "Camera error: "+ err.getMessage());}));
+
+        // Set click listener to start camera preview on tap
+        cameraPreviewView.setOnClickListener(view -> qrCodeScanner.startPreview());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCodeScanner.startPreview();
+        qrCodeScanner.startPreview();
     }
 
     @Override
     protected void onPause() {
-        mCodeScanner.releaseResources();
+        qrCodeScanner.releaseResources();
         super.onPause();
+    }
+
+    private void reqPermission(){
+        String[] permissions = new String[]{Manifest.permission.CAMERA};
+        ActivityCompat.requestPermissions(this, permissions, CAMERA_ACCESS);
+    }
+
+    private void setCameraAccess(){
+        int camera_permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (camera_permission != PackageManager.PERMISSION_GRANTED) reqPermission();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_ACCESS ) {
+            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                // Permission denied
+                Toast.makeText(this, "Camera permission required !", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

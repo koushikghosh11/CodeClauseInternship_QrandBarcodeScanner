@@ -6,20 +6,20 @@
     android:layout_height="match_parent">
 
     <com.budiyev.android.codescanner.CodeScannerView
-        android:id="@+id/scanner_view"
+        android:id="@+id/scanner_area"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:autoFocusButtonColor="@android:color/white"
         app:autoFocusButtonVisible="true"
         app:flashButtonColor="@android:color/white"
         app:flashButtonVisible="true"
-        app:frameColor="@android:color/white"
-        app:frameCornersSize="50dp"
-        app:frameCornersRadius="0dp"
-        app:frameAspectRatioWidth="1"
-        app:frameAspectRatioHeight="1"
+        app:autoFocusButtonColor="@android:color/white"
         app:frameSize="0.75"
         app:frameThickness="2dp"
         app:frameVerticalBias="0.5"
-        app:maskColor="#77000000"/>
+        app:frameColor="@android:color/white"
+        app:frameAspectRatioWidth="1"
+        app:frameAspectRatioHeight="1"
+        app:frameCornersSize="50dp"
+        app:frameCornersRadius="0dp"
+        app:maskColor="#77332828"/>
 </FrameLayout>
