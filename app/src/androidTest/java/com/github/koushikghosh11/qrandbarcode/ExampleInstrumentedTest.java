@@ -1,4 +1,4 @@
-package com.example.qrandbarcode;
+package com.github.koushikghosh11.qrandbarcode;
 
 import android.content.Context;
 
